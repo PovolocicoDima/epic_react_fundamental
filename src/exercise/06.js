@@ -4,28 +4,46 @@
 import * as React from 'react'
 
 function UsernameForm({onSubmitUsername}) {
-  // 🐨 add a submit event handler here (`handleSubmit`).
-  // 💰 Make sure to accept the `event` as an argument and call
-  // `event.preventDefault()` to prevent the default behavior of form submit
-  // events (which refreshes the page).
-  // 📜 https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault
-  //
-  // 🐨 get the value from the username input (using whichever method
-  // you prefer from the options mentioned in the instructions)
-  // 💰 For example: event.target.elements[0].value
-  // 🐨 Call `onSubmitUsername` with the value of the input
+  const [input, setInput] = React.useState('my placeholder')
+  const [error, setError] = React.useState(false)
 
-  // 🐨 add the onSubmit handler to the <form> below
+  const validateInput = input => input === input.toLowerCase()
 
-  // 🐨 make sure to associate the label to the input.
-  // to do so, set the value of 'htmlFor' prop of the label to the id of input
+  const handleSubmit = e => {
+    e.preventDefault()
+    const inputValue = e.target.elements[0].value
+
+    onSubmitUsername(inputValue)
+  }
+
+  const handleInput = e => {
+    let {value} = e.target
+    value = value.toLowerCase()
+    setInput(value)
+    if (!validateInput(value) || value.length === 0) {
+      setError(error => (error = true))
+    } else {
+      setError(error => (error = false))
+    }
+  }
+
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <div>
-        <label>Username:</label>
-        <input type="text" />
+        <label htmlFor="userNameInput">Username:</label>
+        <input
+          value={input}
+          onChange={handleInput}
+          type="text"
+          id="userNameInput"
+        />
       </div>
-      <button type="submit">Submit</button>
+      <button type="submit" disabled={error}>
+        Submit
+      </button>
+      <div style={error ? {color: 'red'} : {color: 'green'}}>
+        {error ? 'THIS IS ERROR!' : 'You can send this form'}
+      </div>
     </form>
   )
 }
